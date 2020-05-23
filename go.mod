@@ -2,7 +2,9 @@ module dux
 
 go 1.14
 
+replace local.packages/util => ./lib/util
+
 require (
 	github.com/dustin/go-humanize v1.0.0
-	github.com/ktrueda/dux v0.0.0-20200523164442-5f3630f30e39 // indirect
+	local.packages/util v0.0.0-00010101000000-000000000000
 )

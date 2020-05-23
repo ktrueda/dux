@@ -1,13 +1,13 @@
-package lib
+package util
 
 import (
 	"bytes"
+	"container/heap"
 	"fmt"
 	"github.com/dustin/go-humanize"
 	"os"
 	"path/filepath"
 	"sort"
-	"container/heap"
 )
 
 /*

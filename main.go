@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/dustin/go-humanize"
-	"github.com/ktrueda/dux/lib"
+	"local.packages/util"
 	"os"
 	"path/filepath"
 )
@@ -23,13 +23,13 @@ func main() {
 	}
 	fmt.Println(fmt.Sprintf("Target Directory: %s", root))
 
-	var suffixSizeMap, directorySizeMap, topLargeFiles = dux.Inspect(root)
+	var suffixSizeMap, directorySizeMap, topLargeFiles = util.Inspect(root)
 
 	fmt.Println("File Size Group By suffix")
-	dux.Show(suffixSizeMap)
+	util.Show(suffixSizeMap)
 	fmt.Println("")
 	fmt.Println("File Size Group By directory")
-	dux.Show(directorySizeMap)
+	util.Show(directorySizeMap)
 
 	fmt.Println("")
 	fmt.Println("Top Large size file")

@@ -1,5 +1,2 @@
 github.com/dustin/go-humanize v1.0.0 h1:VSnTsYCnlFHaM2/igO1h6X3HA71jcobQuxemgkq4zYo=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
-github.com/ktrueda/dux v0.0.0-20200523164442-5f3630f30e39 h1:Sg+pYBBxywKzKtyGHLVXr0ty+qSZtVupXAN7AmifGbY=
-github.com/ktrueda/dux v0.0.0-20200523164442-5f3630f30e39/go.mod h1:OJ83Ma7bwcWHCl+5kvExTbLKNZrfKK/p88AMCF5tq7Q=
-github.com/ktrueda/dux v0.0.0-20200523165305-f4d3eb42fbe7 h1:Nsscb0syjy3OumR9K1gGjbrOtz729ntqAZgoLhF9Fyw=
