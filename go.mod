@@ -1,4 +1,4 @@
-module dux
+module github.com/ktrueda/dux
 
 go 1.14
 
