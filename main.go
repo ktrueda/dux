@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./dux"
+  "github.com/ktrueda/dux/dux"
 	"flag"
 	"fmt"
 	"github.com/dustin/go-humanize"
