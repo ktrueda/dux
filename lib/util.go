@@ -1,4 +1,4 @@
-package dux
+package lib
 
 import (
 	"bytes"
