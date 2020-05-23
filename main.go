@@ -1,10 +1,10 @@
 package main
 
 import (
-  "github.com/ktrueda/dux/dux"
 	"flag"
 	"fmt"
 	"github.com/dustin/go-humanize"
+	"github.com/ktrueda/dux/lib"
 	"os"
 	"path/filepath"
 )
