@@ -23,6 +23,15 @@ func main() {
 	}
 	fmt.Println(fmt.Sprintf("Target Directory: %s", root))
 
+	fi, errStat := os.Stat(root)
+	if errStat != nil {
+		panic(errStat)
+	}
+	if !fi.Mode().IsDir() {
+		fmt.Fprintln(os.Stderr, root, " is not directory.")
+		os.Exit(1)
+	}
+
 	var suffixSizeMap, directorySizeMap, topLargeFiles = util.Inspect(root)
 
 	fmt.Println("File Size Group By suffix")
