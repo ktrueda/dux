@@ -42,7 +42,7 @@ func Inspect(root string) (map[string]int64, map[string]int64, [10]File) {
 	errWalk := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		fi, errStat := os.Stat(path)
 		if errStat != nil {
-			fmt.Println(fmt.Printf("Skip %s (cannot get stat)", path))
+			fmt.Fprintln(os.Stderr, "Skip %s (cannot get stat)", path)
 			return nil
 		}
 		if fi.Mode().IsDir() {
@@ -52,7 +52,7 @@ func Inspect(root string) (map[string]int64, map[string]int64, [10]File) {
 		var dir string = ChildDir(path, root)
 		size, errSize := FileSize(path)
 		if errSize != nil {
-			fmt.Println(fmt.Printf("Skip %s (cannot get size)", path))
+			fmt.Fprintln(os.Stderr, "Skip %s (cannot get size)", path)
 			return nil
 		}
 		suffixSizeMap[suffix] += size
