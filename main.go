@@ -4,12 +4,14 @@ import (
 	"flag"
 	"fmt"
 	"github.com/dustin/go-humanize"
+	"github.com/pkg/profile"
 	"local.packages/util"
 	"os"
 	"path/filepath"
 )
 
 func main() {
+	defer profile.Start(profile.ProfilePath(".")).Stop()
 
 	flag.Parse()
 	if flag.NArg() != 1 {

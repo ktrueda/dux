@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/dustin/go-humanize"
+	"github.com/karrick/godirwalk"
 	"os"
 	"path/filepath"
 	"sort"
@@ -38,31 +39,30 @@ func Inspect(root string) (map[string]int64, map[string]int64, [10]File) {
 	var directorySizeMap map[string]int64 = map[string]int64{}
 	largeFiles := [10]File{}
 
-	errWalk := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-		fi, errStat := os.Stat(path)
-		if errStat != nil {
-			fmt.Fprintln(os.Stderr, "Skip %s (cannot get stat)", path)
+	godirwalk.Walk(root, &godirwalk.Options{
+		Callback: func(path string, de *godirwalk.Dirent) error {
+			// fmt.Printf("%s %s\n", de.ModeType().IsDir(), path)
+			if de.ModeType().IsDir() {
+				return nil
+			}
+			var suffix string = filepath.Ext(path)
+			size, errSize := FileSize(path)
+			if errSize != nil {
+				fmt.Fprintln(os.Stderr, "Skip %s (cannot get size)", path)
+				return nil
+			}
+			var dir string = ChildDir(path, root)
+			suffixSizeMap[suffix] += size
+			directorySizeMap[dir] += size
+			updateMinList(&largeFiles, File{path, size})
 			return nil
-		}
-		if fi.Mode().IsDir() {
-			return nil
-		}
-		var suffix string = filepath.Ext(path)
-		var dir string = ChildDir(path, root)
-		size, errSize := FileSize(path)
-		if errSize != nil {
-			fmt.Fprintln(os.Stderr, "Skip %s (cannot get size)", path)
-			return nil
-		}
-		suffixSizeMap[suffix] += size
-		directorySizeMap[dir] += size
-		updateMinList(&largeFiles, File{path, size})
-
-		return nil
+		},
+		ErrorCallback: func(osPathname string, err error) godirwalk.ErrorAction {
+			fmt.Fprintf(os.Stderr, "ERROR: %s\n", err)
+			return godirwalk.SkipNode
+		},
+		Unsorted: true, // set true for faster yet non-deterministic enumeration (see godoc)
 	})
-	if errWalk != nil {
-		panic(errWalk)
-	}
 
 	return suffixSizeMap, directorySizeMap, largeFiles
 }
