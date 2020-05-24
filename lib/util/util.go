@@ -61,8 +61,8 @@ func Inspect(root string) (map[string]int64, map[string]int64, []File) {
 		suffixSizeMap[suffix] += size
 		directorySizeMap[dir] += size
 		heap.Push(largeFileHeap, File{path, size * -1})
-
 		if largeFileHeap.Len() >= 11 {
+			fmt.Println((*largeFileHeap)[10], largeFileHeap)
 			heap.Remove(largeFileHeap, 10)
 		}
 
