@@ -118,7 +118,7 @@ func normalize(data map[string]int64) map[string]int {
 	}
 	var normalized map[string]int = map[string]int{}
 	for k, v := range data {
-		normalized[k] = int(50 * v / maxv)
+		normalized[k] = int(50 * v / (maxv + 1))
 	}
 	return normalized
 }
