@@ -1,5 +1,8 @@
 # dux (du eXtended)
 
+dux (du eXtended) is a tool to display disk usage. Though original du command has many options, dux has no options.
+It may show what you want to see.
+
 ## install
 
 ```bash
