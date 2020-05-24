@@ -2,9 +2,10 @@ package util
 
 import (
 	"fmt"
-	"github.com/google/uuid"
 	"os"
 	"testing"
+
+	"github.com/google/uuid"
 )
 
 func TestChildDir(t *testing.T) {

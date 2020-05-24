@@ -2,7 +2,7 @@ package util
 
 import (
 	"bytes"
-	"container/heap"
+	// "container/heap"
 	"fmt"
 	"github.com/dustin/go-humanize"
 	"os"
@@ -34,13 +34,10 @@ func ChildDir(path string, root string) string {
 Inspect given root path
 return something about the root path
 */
-func Inspect(root string) (map[string]int64, map[string]int64, []File) {
+func Inspect(root string) (map[string]int64, map[string]int64, [10]File) {
 	var suffixSizeMap map[string]int64 = map[string]int64{}
 	var directorySizeMap map[string]int64 = map[string]int64{}
-
-	// heap to store large files
-	largeFileHeap := &FileList{}
-	heap.Init(largeFileHeap)
+	largeFiles := [10]File{}
 
 	errWalk := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		fi, errStat := os.Stat(path)
@@ -60,11 +57,7 @@ func Inspect(root string) (map[string]int64, map[string]int64, []File) {
 		}
 		suffixSizeMap[suffix] += size
 		directorySizeMap[dir] += size
-		heap.Push(largeFileHeap, File{path, size * -1})
-		if largeFileHeap.Len() >= 11 {
-			fmt.Println((*largeFileHeap)[10], largeFileHeap)
-			heap.Remove(largeFileHeap, 10)
-		}
+		updateMinList(&largeFiles, File{path, size})
 
 		return nil
 	})
@@ -72,12 +65,7 @@ func Inspect(root string) (map[string]int64, map[string]int64, []File) {
 		panic(errWalk)
 	}
 
-	var arr = make([]File, largeFileHeap.Len())
-	for i := 0; i < len(arr); i++ {
-		arr[i] = heap.Pop(largeFileHeap).(File)
-	}
-
-	return suffixSizeMap, directorySizeMap, arr
+	return suffixSizeMap, directorySizeMap, largeFiles
 }
 
 func recursiveChildDir(path string, root string, rec bool) string {
@@ -171,4 +159,21 @@ func showLine(label string, val int64, length int, unit string, labelFomat strin
 	}
 	buffer.WriteString(fmt.Sprintf(" %s %s", humanize.Comma(val), unit))
 	fmt.Println(buffer.String())
+}
+
+func updateMinList(minList *[10]File, newValue File) {
+	size := len(*minList)
+	if (*minList)[size-1].Value < newValue.Value {
+		(*minList)[size-1] = newValue
+	} else {
+		return
+	}
+
+	for i := 0; i < size-1; i++ {
+		if (*minList)[9-i].Value > (*minList)[8-i].Value {
+			(*minList)[9-i], (*minList)[8-i] = (*minList)[8-i], (*minList)[9-i]
+		} else {
+			return
+		}
+	}
 }

@@ -35,6 +35,6 @@ func main() {
 	fmt.Println("Top Large size file")
 	for i := 0; i < len(topLargeFiles); i++ {
 		f := topLargeFiles[i]
-		fmt.Println(fmt.Sprintf("%s %s B", f.Key, humanize.Comma(f.Value*-1)))
+		fmt.Println(fmt.Sprintf("%d %s %s B", i, f.Key, humanize.Comma(f.Value)))
 	}
 }
