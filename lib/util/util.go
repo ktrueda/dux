@@ -2,7 +2,6 @@ package util
 
 import (
 	"bytes"
-	// "container/heap"
 	"fmt"
 	"github.com/dustin/go-humanize"
 	"os"
