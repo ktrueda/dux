@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/dustin/go-humanize"
-	"local.packages/util"
+	"github.com/ktrueda/dux/util"
 	"os"
 	"path/filepath"
 )
