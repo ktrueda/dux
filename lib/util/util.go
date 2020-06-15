@@ -3,10 +3,13 @@ package util
 import (
 	"bytes"
 	"fmt"
-	"github.com/dustin/go-humanize"
 	"os"
 	"path/filepath"
 	"sort"
+	"time"
+
+	"github.com/dustin/go-humanize"
+	"github.com/theckman/yacspin"
 )
 
 /*
@@ -38,7 +41,18 @@ func Inspect(root string) (map[string]int64, map[string]int64, [10]File) {
 	var directorySizeMap map[string]int64 = map[string]int64{}
 	largeFiles := [10]File{}
 
+	cfg := yacspin.Config{
+		Frequency:  100 * time.Millisecond,
+		CharSet:    yacspin.CharSets[59],
+		Suffix:     "Checking ",
+		StopColors: []string{"fgGreen"},
+	}
+
+	spinner, _ := yacspin.New(cfg)
+
+	spinner.Start()
 	errWalk := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		spinner.Message(path)
 		fi, errStat := os.Stat(path)
 		if errStat != nil {
 			fmt.Fprintln(os.Stderr, "Skip", path, " (cannot get stat)")
@@ -63,6 +77,7 @@ func Inspect(root string) (map[string]int64, map[string]int64, [10]File) {
 	if errWalk != nil {
 		panic(errWalk)
 	}
+	spinner.Stop()
 
 	return suffixSizeMap, directorySizeMap, largeFiles
 }
