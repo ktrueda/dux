@@ -3,10 +3,12 @@ package util
 import (
 	"bytes"
 	"fmt"
-	"github.com/dustin/go-humanize"
 	"os"
 	"path/filepath"
 	"sort"
+	"sync"
+
+	"github.com/dustin/go-humanize"
 )
 
 /*
@@ -63,6 +65,71 @@ func Inspect(root string) (map[string]int64, map[string]int64, [10]File) {
 	if errWalk != nil {
 		panic(errWalk)
 	}
+
+	return suffixSizeMap, directorySizeMap, largeFiles
+}
+
+func Inspect2(root string) (map[string]int64, map[string]int64, [10]File) {
+	var suffixSizeMap map[string]int64 = map[string]int64{}
+	var directorySizeMap map[string]int64 = map[string]int64{}
+	largeFiles := [10]File{}
+
+	var mutexSuffixSizeMap sync.RWMutex = sync.RWMutex{}
+	var mutexDirectorySizeMap sync.RWMutex = sync.RWMutex{}
+	var mutexLargeFile sync.RWMutex = sync.RWMutex{}
+
+	producer := func(jobs chan<- string) {
+		errWalk := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+			jobs <- path
+			return nil
+		})
+		if errWalk != nil {
+			panic(errWalk)
+		}
+		close(jobs)
+	}
+	consumer := func(jobs <-chan string, done chan<- bool) {
+		for path := range jobs {
+			fi, errStat := os.Stat(path)
+			if errStat != nil {
+				fmt.Fprintln(os.Stderr, "Skip", path, " (cannot get stat)")
+				continue
+			}
+			if fi.Mode().IsDir() {
+				continue
+			}
+			var suffix string = filepath.Ext(path)
+			var dir string = ChildDir(path, root)
+			size, errSize := FileSize(path)
+			if errSize != nil {
+				fmt.Fprintln(os.Stderr, "Skip", path, " (cannot get size)")
+				continue
+			}
+			mutexSuffixSizeMap.Lock()
+			suffixSizeMap[suffix] += size
+			mutexSuffixSizeMap.Unlock()
+
+			mutexDirectorySizeMap.Lock()
+			directorySizeMap[dir] += size
+			mutexDirectorySizeMap.Unlock()
+
+			mutexLargeFile.Lock()
+			updateMinList(&largeFiles, File{path, size})
+			mutexLargeFile.Unlock()
+		}
+		done <- true
+	}
+	jobs := make(chan string)
+	done := make(chan bool)
+	go producer(jobs)
+	go consumer(jobs, done)
+	go consumer(jobs, done)
+	go consumer(jobs, done)
+	go consumer(jobs, done)
+	go consumer(jobs, done)
+	go consumer(jobs, done)
+	go consumer(jobs, done)
+	<-done
 
 	return suffixSizeMap, directorySizeMap, largeFiles
 }

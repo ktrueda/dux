@@ -25,7 +25,7 @@ func TestChildDir(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := utilChildDir(tt.args.path, tt.args.root); got != tt.want {
+			if got := ChildDir(tt.args.path, tt.args.root); got != tt.want {
 				t.Errorf("ChildDir() = %v, want %v", got, tt.want)
 			}
 		})
@@ -54,7 +54,7 @@ func TestFileSize(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := util.FileSize(tt.args.path)
+			got, err := FileSize(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FileSize() error = %v, wantErr %v", err, tt.wantErr)
 				return
