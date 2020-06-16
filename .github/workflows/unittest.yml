@@ -1,0 +1,18 @@
+name: Run Unittest
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.14
+      - name: Run unittest
+        run: |
+          go test -v github.com/ktrueda/dux/...
+
