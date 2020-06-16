@@ -7,7 +7,8 @@ import (
 	"path/filepath"
 
 	"github.com/dustin/go-humanize"
-	"github.com/ktrueda/dux/lib/util"
+	"github.com/ktrueda/dux/lib/traverser"
+	"github.com/ktrueda/dux/lib/visualization"
 	"github.com/ttacon/chalk"
 )
 
@@ -34,7 +35,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	var suffixSizeMap, directorySizeMap, topLargeFiles = util.Inspect(root)
+	var suffixSizeMap, directorySizeMap, topLargeFiles = traverser.Inspect(root)
 
 	sectionStyle := chalk.Red.NewStyle().
 		WithBackground(chalk.Black).
@@ -43,17 +44,17 @@ func main() {
 		Style
 
 	fmt.Println(sectionStyle("🐘 File Size Group By suffix"))
-	util.Show(suffixSizeMap)
+	fmt.Println(visualization.GraphString(suffixSizeMap))
 	fmt.Println("")
 	fmt.Println(sectionStyle("🦒 File Size Group By directory"))
-	util.Show(directorySizeMap)
+	fmt.Println(visualization.GraphString(directorySizeMap))
 
 	fmt.Println("")
 	fmt.Println(sectionStyle("🦛 Top Large size file"))
 	for i := 0; i < len(topLargeFiles); i++ {
 		f := topLargeFiles[i]
-		if f.Value > 0 {
-			fmt.Println(fmt.Sprintf("%d %s %s B", i, f.Key, humanize.Comma(f.Value)))
+		if f.Size > 0 {
+			fmt.Println(fmt.Sprintf("%d %s %s B", i, f.Path, humanize.Comma(f.Size)))
 		}
 	}
 }

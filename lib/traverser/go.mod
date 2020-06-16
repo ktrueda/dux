@@ -1,4 +1,4 @@
-module util
+module traverser
 
 go 1.14
 
