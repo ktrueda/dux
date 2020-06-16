@@ -6,8 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/ktrueda/dux/pkg/util"
+
 	"github.com/dustin/go-humanize"
-	"github.com/ktrueda/dux/lib/util"
 	"github.com/ttacon/chalk"
 )
 
