@@ -3,10 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/dustin/go-humanize"
-	"github.com/ktrueda/dux/lib/util"
 	"os"
 	"path/filepath"
+
+	"github.com/dustin/go-humanize"
+	"github.com/ktrueda/dux/lib/util"
+	"github.com/ttacon/chalk"
 )
 
 func main() {
@@ -34,14 +36,20 @@ func main() {
 
 	var suffixSizeMap, directorySizeMap, topLargeFiles = util.Inspect(root)
 
-	fmt.Println("File Size Group By suffix")
+	sectionStyle := chalk.Red.NewStyle().
+		WithBackground(chalk.Black).
+		WithTextStyle(chalk.Bold).
+		WithTextStyle(chalk.Underline).
+		Style
+
+	fmt.Println(sectionStyle("🐘 File Size Group By suffix"))
 	util.Show(suffixSizeMap)
 	fmt.Println("")
-	fmt.Println("File Size Group By directory")
+	fmt.Println(sectionStyle("🦒 File Size Group By directory"))
 	util.Show(directorySizeMap)
 
 	fmt.Println("")
-	fmt.Println("Top Large size file")
+	fmt.Println(sectionStyle("🦛 Top Large size file"))
 	for i := 0; i < len(topLargeFiles); i++ {
 		f := topLargeFiles[i]
 		if f.Value > 0 {
