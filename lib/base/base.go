@@ -1,5 +1,10 @@
 package base
 
+import (
+	"fmt"
+	"os"
+)
+
 type File struct {
 	Path string
 	Size int64
@@ -26,4 +31,10 @@ func (h *FileList) Pop() interface{} {
 	x := old[n-1]
 	*h = old[0 : n-1]
 	return x
+}
+
+func Stderr(verbose bool, text ...interface{}) {
+	if verbose {
+		fmt.Fprintln(os.Stderr, text...)
+	}
 }

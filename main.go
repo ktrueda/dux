@@ -1,41 +1,53 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/dustin/go-humanize"
 	"github.com/ktrueda/dux/lib/traverser"
 	"github.com/ktrueda/dux/lib/visualization"
 	"github.com/ttacon/chalk"
+	"github.com/urfave/cli/v2"
 )
 
 func main() {
+	var verbose bool
+	app := &cli.App{
+		Name:  "dux",
+		Usage: "du eXtended",
+		Action: func(c *cli.Context) error {
+			var targetPath string = c.Args().First()
+			fmt.Println(fmt.Sprintf("Target Directory: %s", targetPath))
 
-	flag.Parse()
-	if flag.NArg() != 1 {
-		flag.Usage()
-		os.Exit(1)
+			fi, errStat := os.Stat(targetPath)
+			if errStat != nil {
+				panic(errStat)
+			}
+			if !fi.Mode().IsDir() {
+				fmt.Fprintln(os.Stderr, targetPath, " is not directory.")
+				os.Exit(1)
+			}
+			execute(targetPath, verbose)
+			return nil
+		},
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:        "verbose",
+				Usage:       "Make the operation more talkative",
+				Destination: &verbose,
+			},
+		},
 	}
+	err := app.Run(os.Args)
+	if err != nil {
+		panic(err)
+	}
+}
 
-	root, err1 := filepath.Abs(flag.Args()[0])
-	if err1 != nil {
-		panic(err1)
-	}
-	fmt.Println(fmt.Sprintf("Target Directory: %s", root))
+func execute(root string, verbose bool) {
 
-	fi, errStat := os.Stat(root)
-	if errStat != nil {
-		panic(errStat)
-	}
-	if !fi.Mode().IsDir() {
-		fmt.Fprintln(os.Stderr, root, " is not directory.")
-		os.Exit(1)
-	}
-
-	var suffixSizeMap, directorySizeMap, topLargeFiles = traverser.Inspect(root)
+	var suffixSizeMap, directorySizeMap, topLargeFiles = traverser.Inspect(root, verbose)
 
 	sectionStyle := chalk.Red.NewStyle().
 		WithBackground(chalk.Black).

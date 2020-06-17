@@ -1,7 +1,6 @@
 package traverser
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -32,7 +31,7 @@ func ChildDir(path string, root string) string {
 Inspect given root path
 return something about the root path
 */
-func Inspect(root string) (map[string]int64, map[string]int64, [10]base.File) {
+func Inspect(root string, verbose bool) (map[string]int64, map[string]int64, [10]base.File) {
 	var suffixSizeMap map[string]int64 = map[string]int64{}
 	var directorySizeMap map[string]int64 = map[string]int64{}
 	largeFiles := [10]base.File{}
@@ -43,7 +42,7 @@ func Inspect(root string) (map[string]int64, map[string]int64, [10]base.File) {
 	errWalk := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		fi, errStat := os.Stat(path)
 		if errStat != nil {
-			fmt.Fprintln(os.Stderr, "Skip", path, " (cannot get stat)")
+			base.Stderr(verbose, "Skip", path, " (cannot get stat)")
 			return nil
 		}
 		if fi.Mode().IsDir() {
@@ -53,7 +52,7 @@ func Inspect(root string) (map[string]int64, map[string]int64, [10]base.File) {
 		var dir string = ChildDir(path, root)
 		size, errSize := FileSize(path)
 		if errSize != nil {
-			fmt.Fprintln(os.Stderr, "Skip", path, " (cannot get size)")
+			base.Stderr(verbose, "Skip", path, " (cannot get size)")
 			return nil
 		}
 		suffixSizeMap[suffix] += size
