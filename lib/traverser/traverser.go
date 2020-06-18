@@ -8,17 +8,6 @@ import (
 )
 
 /*
-return file size
-*/
-func FileSize(path string) (int64, error) {
-	fi, err := os.Stat(path)
-	if err != nil {
-		return -1, err
-	}
-	return fi.Size(), nil
-}
-
-/*
 return one-parent directory path
 e.g.
 /dir1/dir2/file -> /dir1/dir2
@@ -50,11 +39,7 @@ func Inspect(root string, verbose bool) (map[string]int64, map[string]int64, [10
 		}
 		var suffix string = filepath.Ext(path)
 		var dir string = ChildDir(path, root)
-		size, errSize := FileSize(path)
-		if errSize != nil {
-			base.Stderr(verbose, "Skip", path, " (cannot get size)")
-			return nil
-		}
+		size := fi.Size()
 		suffixSizeMap[suffix] += size
 		directorySizeMap[dir] += size
 		updateLargestArray(&largeFiles, base.File{Path: path, Size: size})

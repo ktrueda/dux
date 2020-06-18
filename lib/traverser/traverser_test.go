@@ -1,11 +1,8 @@
 package traverser
 
 import (
-	"fmt"
-	"os"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/ktrueda/dux/lib/base"
 )
 
@@ -28,40 +25,6 @@ func TestChildDir(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := ChildDir(tt.args.path, tt.args.root); got != tt.want {
 				t.Errorf("ChildDir() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestFileSize(t *testing.T) {
-	uuidObj, _ := uuid.NewUUID()
-	var tempFile = fmt.Sprintf("/tmp/%s", uuidObj.String())
-
-	f, _ := os.Create(tempFile)
-	f.WriteString("hello")
-	f.Close()
-
-	type args struct {
-		path string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    int64
-		wantErr bool
-	}{
-		{"exist", args{tempFile}, 5, false},
-		{"not found", args{"/tmp/not_cound"}, -1, true},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := FileSize(tt.args.path)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FileSize() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("FileSize() = %v, want %v", got, tt.want)
 			}
 		})
 	}
